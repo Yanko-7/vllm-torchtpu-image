@@ -45,7 +45,9 @@ RUN python /opt/src/requirements.py build vllm vllm-torchtpu > /opt/src/build.tx
     && python -m pip freeze > /opt/requirements-installed.txt \
     && rm -rf /opt/src/vllm-torchtpu
 
-RUN JAX_PLATFORMS=cpu python -c "import importlib.metadata as m, jax, torch, torch_tpu, vllm; \
+# vllm itself is not imported: it needs the vllm-torchtpu platform plugin,
+# which is installed at run time.
+RUN JAX_PLATFORMS=cpu python -c "import importlib.metadata as m, jax, torch, torch_tpu; \
 print({p: m.version(p) for p in ('torch', 'torch-tpu', 'vllm', 'jax', 'jaxlib', 'libtpu', 'tpu-sync-torch')}); \
 print(jax.devices())"
 
